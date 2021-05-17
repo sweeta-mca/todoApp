@@ -8,6 +8,7 @@
 let todos = [];
 let isEdit = false;
 let editId =0;
+
 let isActiveChecked =false;
 let isCompletedChecked =false;
 
@@ -33,35 +34,36 @@ btnAdd.addEventListener('click',()=>{
         formValues[val] = form.get(val);
     }
 
-    if(formValues.title.length>0 && formValues.desc.length>0)
+    if(!isEdit)
     {
-        if(isEdit){ 
-            let todo;
-            fetchTodo(editId)
-            .then(data =>{
-                todo= data;
-                todo.title = formValues.title;
-                todo.description=formValues.desc;        
-                updateTodo(todo).then(data => {
-                    todos.splice(todos.findIndex(t=> t.id == data.id),1,data);
-                    renderTodos(todos);
-                });         
-            })
-            .catch(err=>console.log(err));
-            toggleAddTodo();
-        }
-        else{
-            var todo = getTodo(formValues.title,formValues.desc);   
-            createTodo(todo).then(data => {
-                todos = [...todos,todo];
-                renderTodos(todos);
-            });
-        }
-        
-        title.value = null;
-        desc.value = null;
+        // add functionality
+        var todo = getTodo(formValues.title,formValues.desc);   
+        createTodo(todo)
+        .then(_ => {
+            todos = [...todos,todo];
+            renderTodos(todos);
+        });
     }
-        
+    else
+    {
+        // Edit functionality
+        var newTodos = [...todos];
+        var idx = newTodos.findIndex(t=>t.id == editId);
+        var t = {...newTodos[idx]};
+        t.title = formValues.title;
+        t.description = formValues.desc;
+        newTodos[idx] = t;
+        todos = newTodos;
+        toggleAddTodo();
+        updateTodo(t)
+        .then(_ =>{
+            renderTodos(todos);
+        });
+
+    }
+    
+    title.value = null;
+    desc.value = null;
 });
 
 show_active.addEventListener("click",()=>{
@@ -124,6 +126,8 @@ function renderTodos(todoList){
     todoRows.forEach(row => {
         todo_list.appendChild(row);
     });
+
+    refreshCheckBoxControls();
     
 }
 
@@ -132,8 +136,7 @@ function render()
 {
     getTodos().then(data => {
         todos = data;
-        renderTodos(todos)    
-        refreshCheckBoxControls();
+        renderTodos(todos);        
     });
 }
 
@@ -167,8 +170,8 @@ function createRow(todo){
     
     actionBtn.addEventListener('click',(ev) =>{        
         todo.status = COMPLETED;
-        updateTodo(todo).then(data => {
-            todos.splice(todos.findIndex(t=> t.id == data.id),1,data);
+        updateTodo(todo).then(_ => {
+            todos.splice(todos.findIndex(t=> t.id == todo.id),1,todo);
             renderTodos(todos);
         });
     });
@@ -194,8 +197,8 @@ function createRow(todo){
     actionBtn.className ="btn btn-danger me-3";
     actionBtn.textContent="Delete";
     actionBtn.addEventListener('click',() =>{
-        deleteTodo(todo.id).then(data => {
-            todos.splice(todos.findIndex(t=> t.id == data.id),1);
+        deleteTodo(todo.id).then(_ => {
+            todos.splice(todos.findIndex(t=> t.id == todo.id),1);
             renderTodos(todos);
         });
     });
@@ -213,6 +216,8 @@ function refreshCheckBoxControls(){
     {
         show_active.removeAttribute("disabled");
         show_completed.removeAttribute("disabled");
+        show_active.setAttribute("enabled");
+        show_completed.setAttribute("enabled");
     }
     else{
         show_active.setAttribute("disabled","disabled");
