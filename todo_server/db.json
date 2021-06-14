@@ -1,3 +1,11 @@
 {
-  "todos": []
+  "todos": [
+    {
+      "id": 1,
+      "title": "Todo demo",
+      "description": "todo application discusion at 10 am",
+      "status": "Active",
+      "createdDate": "2021-05-17T06:55:41.436Z"
+    }
+  ]
 }
