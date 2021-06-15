@@ -216,8 +216,8 @@ function refreshCheckBoxControls(){
     {
         show_active.removeAttribute("disabled");
         show_completed.removeAttribute("disabled");
-        show_active.setAttribute("enabled");
-        show_completed.setAttribute("enabled");
+        show_active.setAttribute("enabled","enabled");
+        show_completed.setAttribute("enabled","enabled");
     }
     else{
         show_active.setAttribute("disabled","disabled");

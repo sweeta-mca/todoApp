@@ -1,5 +1,8 @@
+// Fake json server url
+//const ENDPOINT_URL = "http://localhost:3001/todos/";
 
-const ENDPOINT_URL = "http://localhost:3001/todos/";
+// Node-Express server url
+const ENDPOINT_URL = "http://localhost:3000/api/todos/"
 
 /**
  * Function to fetch all todos available
